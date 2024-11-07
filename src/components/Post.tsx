@@ -1,11 +1,34 @@
+import { post, User } from "@/App";
 import { FormComents } from "./FormComents";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
+import { useState } from "react";
+import { error } from "console";
 
-export function Post() {
+export function Post(props: post) {
+  const [user, setUser] = useState<User>()
+
+  // Criar função getUser para trazer os dados do usuário
+  async function getUser() {
+    try {
+    const response = await fetch('http://localhost:3000/posts'+ props.userId)
+    const data: User = await response.json()
+    setUser(data)
+    } catch(error) {
+    console.error(error)
+  }
+  }
+}
+
+  // Utilizar o userEffect para executar a função getUser
+  useEffect(() => {
+    getUser()
+  }, [])
+  // Alterar os dados do usuário no HTML
+  
   return (
     <>
-      <div className="w-3/6 max-h-screen bg-zinc-800 rounded-xl flex flex-col p-10">
+      <div className="bg-zinc-800 rounded-xl flex flex-col p-10">
         <div className="flex">
           <img
             src="darth.jpg"
@@ -19,9 +42,11 @@ export function Post() {
         </div>
         <div className=" flex flex-col py-5 gap-2">
           <p className="text-white">
-            Às vezes, é necessário usar o lado negro da força!
+           {props.content}
           </p>
-          <p className="text-sky-500">#DarkSide #SithLife</p>
+          <p className="text-sky-500">
+            {props.hashtags.join(',')}
+          </p>
         </div>
 
         <Separator className="bg-zinc-600 my-4" />
